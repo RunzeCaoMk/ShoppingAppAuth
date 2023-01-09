@@ -2,6 +2,7 @@ package com.cao.shoppingAppAuth.controller;
 
 import com.cao.shoppingAppAuth.domain.request.LoginRequest;
 import com.cao.shoppingAppAuth.domain.response.LoginResponse;
+import com.cao.shoppingAppAuth.exception.InvalidCredentialsException;
 import com.cao.shoppingAppAuth.security.AuthUserDetail;
 import com.cao.shoppingAppAuth.security.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class LoginController {
 
     //User trying to log in with username and password
     @PostMapping("auth/login")
-    public LoginResponse login(@RequestBody LoginRequest request){
+    public LoginResponse login(@RequestBody LoginRequest request) throws InvalidCredentialsException {
 
         Authentication authentication;
 
@@ -44,7 +45,7 @@ public class LoginController {
                   new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
           );
         } catch (AuthenticationException e){
-            throw new BadCredentialsException("Provided credential is invalid.");
+            throw new InvalidCredentialsException("Incorrect credentials, please try again.");
         }
 
         //Successfully authenticated user will be stored in the authUserDetail object

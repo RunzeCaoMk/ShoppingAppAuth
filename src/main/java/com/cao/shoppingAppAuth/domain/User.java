@@ -1,4 +1,4 @@
-package com.cao.shoppingAppAuth.entity;
+package com.cao.shoppingAppAuth.domain;
 
 import lombok.*;
 

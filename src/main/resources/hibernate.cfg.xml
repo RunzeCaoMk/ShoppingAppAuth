@@ -22,7 +22,7 @@
         <!--        how many connections it should try to acquire if the pool runs out of available connections.-->
         <property name="hibernate.c3p0.acquire_increment">5</property>
 
-        <mapping class="com.cao.shoppingAppAuth.entity.User"/>
+        <mapping class="com.cao.shoppingAppAuth.domain.User"/>
 
     </session-factory>
 </hibernate-configuration>

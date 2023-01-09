@@ -1,7 +1,7 @@
 package com.cao.shoppingAppAuth.service;
 
 import com.cao.shoppingAppAuth.dao.UserDao;
-import com.cao.shoppingAppAuth.entity.User;
+import com.cao.shoppingAppAuth.domain.User;
 import com.cao.shoppingAppAuth.security.AuthUserDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

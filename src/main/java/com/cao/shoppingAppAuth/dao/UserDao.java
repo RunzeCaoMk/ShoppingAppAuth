@@ -1,7 +1,7 @@
 package com.cao.shoppingAppAuth.dao;
 
 import com.cao.shoppingAppAuth.config.HibernateConfigUtil;
-import com.cao.shoppingAppAuth.entity.User;
+import com.cao.shoppingAppAuth.domain.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
