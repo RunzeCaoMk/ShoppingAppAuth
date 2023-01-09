@@ -58,7 +58,6 @@ public class LoginController {
                 .message("Welcome " + authUserDetail.getUsername())
                 .token(token)
                 .build();
-
     }
 
 }

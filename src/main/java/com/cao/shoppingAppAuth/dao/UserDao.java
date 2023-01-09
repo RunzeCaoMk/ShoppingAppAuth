@@ -1,8 +1,14 @@
 package com.cao.shoppingAppAuth.dao;
 
+import com.cao.shoppingAppAuth.config.HibernateConfigUtil;
 import com.cao.shoppingAppAuth.entity.User;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -10,16 +16,36 @@ import java.util.Optional;
 @Repository
 public class UserDao {
 
-    // should be stored in the database
-    // user table,permission table
-    private final List<User> users = Arrays.asList(
-            new User("user", "user", Arrays.asList("read")),
-            new User("rep", "rep", Arrays.asList("write")),
-            new User("admin", "admin", Arrays.asList("delete", "read", "update", "write"))
-    );
-
     public Optional<User> loadUserByUsername(String username){
-        return users.stream().filter(user -> username.equals(user.getUsername())).findAny();
+        SessionFactory sessionFactory = HibernateConfigUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        List<User> result = null;
+        try {
+            session.beginTransaction();
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
+
+            Root<User> root = criteriaQuery.from(User.class);
+            criteriaQuery.select(root);
+            criteriaQuery.where(criteriaBuilder.equal(root.get("username"), username));
+
+            result = session.createQuery(criteriaQuery).getResultList();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (session.getTransaction() != null) {
+                session.getTransaction().rollback();
+                session.close();
+            }
+        } finally {
+            session.close();
+        }
+
+        if (result != null && result.size() == 1) {
+            return Optional.of(result.get(0));
+        } else {
+            return Optional.empty();
+        }
     }
 
 }
