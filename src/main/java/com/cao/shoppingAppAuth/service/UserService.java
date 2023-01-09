@@ -50,9 +50,6 @@ public class UserService implements UserDetailsService {
     private List<GrantedAuthority> getAuthoritiesFromUser(User user){
         List<GrantedAuthority> userAuthorities = new ArrayList<>();
 
-//        for (String permission :  user.getPermissions()){
-//            userAuthorities.add(new SimpleGrantedAuthority(permission));
-//        }
         if (user.getIs_admin()) {
             userAuthorities.add(new SimpleGrantedAuthority("Admin_Permission"));
         } else {
