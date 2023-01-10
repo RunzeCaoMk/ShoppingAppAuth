@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -36,9 +37,16 @@ public class UserService implements UserDetailsService {
 
         User user = userOptional.get(); // database user
 
+        // dealing with manually added User which password is not encrypted
+        String encodedPassword = user.getPassword();
+        Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
+        if (!BCRYPT_PATTERN.matcher(encodedPassword).matches()) {
+            encodedPassword = new BCryptPasswordEncoder().encode(encodedPassword);
+        }
+
         return AuthUserDetail.builder() // spring security's userDetail
                 .username(user.getUsername())
-                .password(new BCryptPasswordEncoder().encode(user.getPassword()))
+                .password(encodedPassword)
                 .authorities(getAuthoritiesFromUser(user))
                 .accountNonExpired(true)
                 .accountNonLocked(true)

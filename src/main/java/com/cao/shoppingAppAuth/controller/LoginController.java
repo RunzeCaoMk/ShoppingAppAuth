@@ -1,16 +1,20 @@
 package com.cao.shoppingAppAuth.controller;
 
+import com.cao.shoppingAppAuth.domain.User;
 import com.cao.shoppingAppAuth.domain.request.LoginRequest;
 import com.cao.shoppingAppAuth.domain.response.LoginResponse;
 import com.cao.shoppingAppAuth.exception.InvalidCredentialsException;
 import com.cao.shoppingAppAuth.security.AuthUserDetail;
 import com.cao.shoppingAppAuth.security.JwtProvider;
+import com.cao.shoppingAppAuth.security.PasswordDecrypter;
+import com.cao.shoppingAppAuth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,15 +22,19 @@ import java.lang.String;
 
 @RestController
 public class LoginController {
-
+    private UserService userService;
     private AuthenticationManager authenticationManager;
+    private JwtProvider jwtProvider;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Autowired
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
-
-    private JwtProvider jwtProvider;
 
     @Autowired
     public void setJwtProvider(JwtProvider jwtProvider) {
@@ -36,14 +44,12 @@ public class LoginController {
     //User trying to log in with username and password
     @PostMapping("auth/login")
     public LoginResponse login(@RequestBody LoginRequest request) throws InvalidCredentialsException {
-
         Authentication authentication;
-
         //Try to authenticate the user using the username and password
         try{
-          authentication = authenticationManager.authenticate(
-                  new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-          );
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+            );
         } catch (AuthenticationException e){
             throw new InvalidCredentialsException("Incorrect credentials, please try again.");
         }
